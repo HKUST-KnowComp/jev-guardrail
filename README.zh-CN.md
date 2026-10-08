@@ -35,11 +35,11 @@ Routing uses 1,000 held-out cases; safety is 73,415/79,987 supervised records. F
 
 ## 在 Hermes 使用
 
-先按 [模型卡](https://huggingface.co/hubin/jev-guard-v3.2-2b) 部署审核服务，然后运行：
+直接连接已部署的 Jev v3.2 审核服务，无需本地 GPU：
 
 ```bash
 curl -fsSL https://huggingface.co/hubin/jev-guard-v3.2-2b/resolve/main/downloads/install-hermes-jev.txt -o /tmp/install-hermes-jev.sh
-bash /tmp/install-hermes-jev.sh --endpoint http://127.0.0.1:29660
+bash /tmp/install-hermes-jev.sh --endpoint https://approaches-lemon-antique-garden.trycloudflare.com
 jev-hermes
 ```
 

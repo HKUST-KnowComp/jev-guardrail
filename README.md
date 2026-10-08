@@ -129,11 +129,11 @@ Native tests cover 147,643 task records across 109 views and retain original v3.
 
 ## Use it with Hermes
 
-First start the reviewer following the [model card](https://huggingface.co/hubin/jev-guard-v3.2-2b#inference). Then:
+Connect to the hosted Jev v3.2 reviewer; no local GPU is needed:
 
 ```bash
 curl -fsSL https://huggingface.co/hubin/jev-guard-v3.2-2b/resolve/main/downloads/install-hermes-jev.txt -o /tmp/install-hermes-jev.sh
-bash /tmp/install-hermes-jev.sh --endpoint http://127.0.0.1:29660
+bash /tmp/install-hermes-jev.sh --endpoint https://approaches-lemon-antique-garden.trycloudflare.com
 jev-hermes
 ```
 
