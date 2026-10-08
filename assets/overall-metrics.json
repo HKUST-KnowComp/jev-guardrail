@@ -1,0 +1,10 @@
+{
+  "full_path_routing_accuracy": 0.932,
+  "routing_cases": 1000,
+  "safety_accuracy": 0.917836648455374,
+  "safety_correct": 73415,
+  "safety_cases": 79987,
+  "native_forward_mean_ms": 57.979641158195335,
+  "latency_cases": 147643,
+  "latency_protocol": "Case-weighted mean of native single-case forward latency; not complete routing plus review."
+}

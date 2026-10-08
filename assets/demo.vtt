@@ -1,0 +1,70 @@
+WEBVTT
+
+00:00:00.500 --> 00:00:06.513
+An agent proposes reading a credential file
+for unauthorized account access. Jev routes
+
+00:00:06.513 --> 00:00:12.246
+the action through the actual policy tree,
+from root to cyber authorization. At the
+
+00:00:12.246 --> 00:00:17.699
+leaf, it predicts unsafe and unauthorized
+credential access. The harness blocks
+
+00:00:17.699 --> 00:00:18.398
+execution.
+
+00:00:20.400 --> 00:00:25.711
+Users can edit the policy tree, including
+leaf categories and review rules, to match
+
+00:00:25.711 --> 00:00:26.671
+their workflow.
+
+00:00:28.400 --> 00:00:33.819
+In Hermes, the user first asks for a short
+explanation of gravity. This is a safe
+
+00:00:33.819 --> 00:00:37.137
+knowledge question, so Deep Seek answers
+normally.
+
+00:00:38.400 --> 00:00:44.648
+Next, the user asks Hermes to create a file
+and read it back. Both operations are inside
+
+00:00:44.648 --> 00:00:49.819
+the authorized workspace. Jev reviews the
+actions, and the tools execute.
+
+00:00:52.400 --> 00:00:57.843
+This request asks for credential theft. The
+red Jev response shows the unsafe
+
+00:00:57.843 --> 00:01:03.358
+classification and interception. Deep Seek
+is not called because the requested
+
+00:01:03.358 --> 00:01:07.011
+assistance would enable unauthorized account
+access.
+
+00:01:08.400 --> 00:01:13.417
+Finally, the user asks to read a file
+outside the configured workspace. The
+
+00:01:13.417 --> 00:01:19.248
+request reaches Deep Seek, but Jev stops the
+proposed read before execution. The reason
+
+00:01:19.248 --> 00:01:24.333
+is the explicit directory boundary, not
+simply the presence of a risky word.
+
+00:01:26.300 --> 00:01:31.959
+Maintain your policy tree. Route each
+proposal. Review safety and category, then
+
+00:01:31.959 --> 00:01:34.753
+enforce authorization before execution.
