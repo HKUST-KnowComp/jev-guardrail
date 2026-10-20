@@ -39,7 +39,7 @@ Routing uses 1,000 held-out cases; safety is 73,415/79,987 supervised records. F
 
 ```bash
 curl -fsSL https://huggingface.co/hubin/jev-guard-v3.2-2b/resolve/main/downloads/install-hermes-jev.txt -o /tmp/install-hermes-jev.sh
-bash /tmp/install-hermes-jev.sh --endpoint https://approaches-lemon-antique-garden.trycloudflare.com
+bash /tmp/install-hermes-jev.sh --endpoint https://theft-anticipated-won-threats.trycloudflare.com
 jev-hermes
 ```
 
