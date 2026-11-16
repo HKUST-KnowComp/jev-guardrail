@@ -43,4 +43,8 @@ bash /tmp/install-hermes-jev.sh --endpoint https://theft-anticipated-won-threats
 jev-hermes
 ```
 
-用 `hermes setup` 配置 provider；输入 `/safety-policy` 编辑实际树。此 GitHub 仓库只存网站文件。模型及部署指引见模型卡，训练数据和复现代码单独管理。
+用 `hermes setup` 配置 provider；输入 `/safety-policy` 编辑实际树。模型及部署指引见模型卡，训练数据和复现代码单独管理。
+
+## Hermes 插件源码
+
+本仓库同时维护项目网站和 [Hermes 插件源码](integrations/hermes/jev-guard/)。[插件维护与部署说明](integrations/hermes/README.md)介绍了目录结构、在现有 Linux/WSL Hermes 中更新插件的方法，以及默认关闭的请求阈值开关。

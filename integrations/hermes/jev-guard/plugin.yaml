@@ -1,0 +1,9 @@
+name: jev-guard
+version: "0.1.0"
+description: "Jev request and tool review with an editable rule tree. Use hermes jev-chat for pre-model request gating."
+provides_hooks:
+  - pre_tool_call
+  - post_tool_call
+  - pre_tool_execution
+  - post_approval_decision
+  - pre_llm_call
