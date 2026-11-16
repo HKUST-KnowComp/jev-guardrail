@@ -1,0 +1,218 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Jev Guard · Safety policy</title>
+<style>
+:root{color-scheme:light;--bg:#fafaf8;--ink:#263445;--line:#d9dfe3;--blue:#315f85;--green:#30664f}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px system-ui}header{padding:20px 28px;border-bottom:1px solid var(--line);display:flex;gap:14px;align-items:center;flex-wrap:wrap}h1{font-size:20px;margin:0}button,input,textarea,select{font:inherit}button{border:1px solid var(--line);background:white;color:var(--blue);padding:8px 12px;border-radius:5px;cursor:pointer}button.primary{background:var(--blue);color:white}button:disabled{opacity:.4;cursor:default}.meta{color:#647381;font-size:12px}.right{margin-left:auto}main{display:grid;grid-template-columns:minmax(380px,1fr) minmax(350px,460px);gap:24px;padding:24px 28px;align-items:start}section{min-width:0}.editor{position:sticky;top:12px;border:1px solid var(--line);background:white;padding:20px;border-radius:8px}h2{font-size:16px;margin:0 0 16px}.tree ul{list-style:none;margin:0;padding:0 0 0 24px;border-left:1px solid var(--line)}.tree>ul{padding-left:0;border:0}.tree li{padding:5px 0 5px 12px;position:relative}.tree li:before{content:'';position:absolute;left:0;top:19px;width:10px;border-top:1px solid var(--line)}.node{font:13px ui-monospace,monospace;border:0;padding:5px 7px;background:transparent;word-break:break-word;text-align:left}.node.selected{background:#e2edf5;color:var(--blue)}details{margin:5px 0 5px 12px}summary{color:var(--green);cursor:pointer;font-size:12px}.tags{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px}.tag{background:#edf4ee;border:1px solid #d8e6da;border-radius:4px;font-size:11px;padding:3px 6px;overflow-wrap:anywhere;max-width:100%}label{display:block;font-size:12px;color:#647381;margin:12px 0 5px}input,textarea,select{display:block;width:100%;padding:8px;border:1px solid var(--line);border-radius:4px;background:white;color:var(--ink)}textarea{resize:vertical;min-height:70px}.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.danger{color:#a24340}.status{padding:12px 28px;min-height:42px;border-bottom:1px solid var(--line);font-size:13px}.bottom{padding:0 28px 28px}table{width:100%;border-collapse:collapse;table-layout:fixed}td,th{text-align:left;border-bottom:1px solid var(--line);padding:10px;overflow-wrap:anywhere;font-size:12px}.allow{color:#30664f}.ask{color:#926320}.block{color:#a24340}pre{white-space:pre-wrap;overflow-wrap:anywhere;font:12px ui-monospace,monospace}.explanation-item{border-left:3px solid var(--line);padding:8px 12px;margin:12px 0}.explanation-item p{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.5}.hidden{display:none}dialog{width:min(950px,94vw);border:1px solid var(--line);border-radius:8px;max-height:90vh;overflow:auto}dialog::backdrop{background:#1a293455}.panel-tabs{margin:14px 0}.hint{font-size:12px;color:#647381;line-height:1.5}.metrics{display:flex;gap:12px;margin:10px 0}.metrics span{padding:5px 8px;background:#eef1f3;border-radius:4px}.check{width:auto;display:inline}@media(max-width:850px){main{grid-template-columns:1fr;padding:14px}.editor{position:static}header,.bottom{padding:16px}.status{padding:12px 16px}}
+input:disabled{background:#f1f3f4;color:#7b8794}
+</style>
+<header><h1>Jev Guard · Safety policy</h1><span class="meta" id="health">Jev · loading</span><span class="right meta" id="revision"></span><button id="reload">Reload</button><button class="primary" id="save">Save policy tree</button></header>
+<div class="status" id="status">Routing branches are visible; leaf taxonomies start collapsed.</div>
+<main><section><div class="row panel-tabs"><button id="show-tree">Policy tree</button><button id="show-permissions">权限配置</button></div><p class="hint">职责划分：权限配置管理能力与资源范围；节点执行规则补充业务条件；分类用于理解材料。业务规则不能扩大权限，也无需重复列出目录、域名或凭据开关。</p><div class="tree" id="tree"></div><div id="permissions-panel" class="hidden editor"><h2>独立权限配置</h2><p class="hint">保存后立即替换 polarbear 当前及新会话的基础权限，清除会话追加授权和旧审批。文件、网页或搜索结果不能改变这些权限。规则树另行保存。</p><p class="meta" id="permissions-revision"></p><div id="permission-fields"></div><p class="hint">网络写入和文件发送须在实际会话中用 /jev-scope send-text 或 send-file 授予一次许可。授权绑定目标、正文和用途，不在此处持久保存。</p><div class="row"><button id="reload-permissions">重新载入权限</button><button id="save-permissions" class="primary">保存并应用权限</button></div></div></section><section class="editor">
+<div class="row panel-tabs"><button data-tab="node">Node</button><button data-tab="settings">Policy</button><button data-tab="run">Preview</button></div>
+<div id="node-tab"><h2 id="selected">Select a node</h2><label>Name / routing choice</label><input id="label"><label>Routing description</label><textarea id="description"></textarea><label>内容分类审核说明</label><textarea id="policy"></textarea><label><input class="check" id="execution-enabled" type="checkbox"> 启用本节点执行规则</label><div id="execution-fields" class="hidden"><label>匹配范围</label><select id="execution-match"><option value="route">当前分类路径（含子节点）</option><option value="effects">实际行为（不依赖分类结果）</option></select><label id="execution-effects-label" class="hidden">匹配行为（可多选）</label><select id="execution-effects" multiple size="5" class="hidden"></select><label>执行要求</label><select id="execution-decision"><option value="review">按规则文字审核</option><option value="ask">必须人工确认</option><option value="block">禁止</option></select><p class="hint">“必须人工确认”和“禁止”对匹配范围内的动作直接生效，文字只作说明；有条件的业务判断请选择“按规则文字审核”，并写明适用条件。</p><label>执行规则文字</label><textarea id="execution-policy" rows="4"></textarea></div><p class="hint">分类说明用于理解材料；执行规则补充业务条件并参与最终裁决。目录、域名和能力开关在权限配置维护。明确禁止优先于确认，规则不能扩大权限。两种匹配方式均只作用于工具动作；请求入口单独审核协助内容是否安全，不以执行准备不足为由提前拦截。</p><label>Prediction mode</label><select id="mode"><option value="single">choice</option><option value="multi">noul / multi</option><option value="score">score</option></select><label>Category / score (one per line)</label><textarea id="categories" rows="9"></textarea><label>Category definitions (JSON)</label><textarea id="definitions" rows="4"></textarea><label>Parent node</label><select id="parent"></select><label><input class="check" id="requires" type="checkbox"> Requires explicit governing policy</label><div class="row"><button id="apply">Apply to draft</button><button id="add">Add child</button><button id="remove" class="danger">Delete subtree</button></div></div>
+<div id="settings-tab" class="hidden">
+<h2>Global policy</h2>
+<p class="hint">全局说明规定审核方法；具体业务条件在节点规则维护，能力和资源范围在权限配置维护。</p>
+<label>Execution review policy</label><textarea id="default-policy" rows="12"></textarea>
+<p>Routing follows the highest-probability branch to a leaf. No routing confidence or margin filter.</p>
+<label><input class="check" id="unsafe-threshold-enabled" type="checkbox" aria-describedby="unsafe-threshold-status"> 启用请求阈值</label>
+<p class="hint" id="unsafe-threshold-status" aria-live="polite"></p>
+<label for="unsafe-threshold">请求不安全分数阈值（0～1）</label>
+<input id="unsafe-threshold" type="number" min="0" max="1" step="any" placeholder="例如：0.99" aria-describedby="unsafe-threshold-hint" disabled>
+<p class="hint" id="unsafe-threshold-hint">开启后，安全头的不安全分数达到阈值时拦截，低于阈值时准入。提高阈值会减少拦截，也可能增加漏放。关闭后恢复原请求审核规则。此开关只影响用户请求准入；工具权限和工具动作审核继续生效。修改后点击 Save policy tree 保存。</p>
+<label for="decision-probability">Decision minimum probability · 决策置信度</label>
+<input id="decision-probability" type="number" min="0" max="1" step="any" required>
+<p class="hint">始终用于工具动作审核；仅在请求阈值关闭时用于请求审核。</p>
+<div class="row"><button id="apply-settings">Apply to draft</button><button id="export">Export config</button><button id="import">Import config</button><input type="file" id="file" accept="application/json" class="hidden"></div>
+</div>
+<div id="run-tab" class="hidden"><h2>Review preview</h2><label>User task</label><textarea id="prompt" rows="6">Read numbers.csv, compute the sum, and write totals.json. Preserve numbers.csv.</textarea><label>Governing policy (optional)</label><input id="governing-policy" list="policy-names"><datalist id="policy-names"></datalist><label>Policy text (optional)</label><textarea id="policy-text" rows="3"></textarea><label>Tool name</label><input id="tool-name" value="read_file"><label>Tool arguments (JSON)</label><textarea id="files" rows="4">{"path":"numbers.csv"}</textarea><div class="row"><button id="run" class="primary">Review without execution</button><button id="refresh">Refresh actions</button></div><div id="run-explanation"></div><details><summary>原始审核记录</summary><pre id="run-result"></pre></details><p class="hint">预览使用已保存的权限和策略，不执行工具，也不携带真实宿主调用契约；不能代替最终执行检查。分类标签与执行授权分开显示。</p></div>
+</section></main>
+<section class="bottom"><h2>最近的审核与执行检查</h2><div class="metrics" id="counts"></div><table><thead><tr><th>Task / action</th><th>Tool</th><th>阶段</th><th>Routing</th><th>Category</th><th>Decision / time</th></tr></thead><tbody id="actions"></tbody></table></section>
+<dialog id="detail"><button id="close">关闭</button><div id="detail-explanation"></div><div id="detail-related" class="row"></div><details><summary>原始审核记录</summary><pre id="detail-json"></pre></details></dialog>
+<script>
+let executionEffects=[];let permissions,permissionsDirty=false;let config,token,selected='root',revision,dirty=false,rows=[];const $=id=>document.getElementById(id);
+
+const effectLabels={read:'读取文件',write:'写入文件',delete:'删除',execute:'执行程序',network:'网页读取或其他网络请求',network_search:'公开搜索',delegation:'委派任务',user_interaction:'用户交互',session_state:'会话状态'};
+function executionFields(){
+ const enabled=$('execution-enabled').checked,byEffect=$('execution-match').value==='effects';
+ $('execution-fields').classList.toggle('hidden',!enabled);
+ for(const id of ['execution-effects','execution-effects-label'])$(id).classList.toggle('hidden',!byEffect);
+}
+function selectExecutionRule(node){
+ const rule=node.execution_rule;
+ $('execution-enabled').checked=!!rule;
+ $('execution-match').value=rule?.effects?.length?'effects':'route';
+ $('execution-decision').value=rule?.decision||'review';
+ $('execution-policy').value=rule?.policy||'';
+ const effects=$('execution-effects');effects.replaceChildren();
+ for(const value of executionEffects){const option=document.createElement('option');option.value=value;option.textContent=effectLabels[value]||value;option.selected=!!rule?.effects?.includes(value);effects.append(option)}
+ executionFields();
+}
+function applyExecutionRule(node){
+ if(!$('execution-enabled').checked){delete node.execution_rule;return}
+ const effects=$('execution-match').value==='effects'?[...$('execution-effects').selectedOptions].map(x=>x.value):[];
+ if($('execution-match').value==='effects'&&!effects.length)throw Error('请至少选择一种实际行为');
+ const decision=$('execution-decision').value,policy=$('execution-policy').value.trim();
+ if(decision==='review'&&!policy)throw Error('按规则文字审核时须填写执行规则');
+ node.execution_rule={decision,policy,effects};
+}
+$('execution-enabled').onchange=executionFields;
+$('execution-match').onchange=executionFields;
+
+
+function renderExplanation(id,explanation){
+ const box=$(id);box.replaceChildren();
+ if(!explanation){box.textContent='该记录没有结构化说明，请查看原始审核记录。';return}
+ const heading=document.createElement('h2');heading.textContent=(explanation.stage_label||'审核')+'：'+explanation.summary;heading.className=explanation.decision;box.append(heading);
+ const revision=document.createElement('p');revision.className='meta';
+ revision.textContent='记录依据：策略树修订 '+(explanation.config_revision??'未记录')+'；权限修订 '+(explanation.permissions_revision??'未记录')+'。下方链接打开当前配置，可能与历史记录不同。';box.append(revision);
+ const resolution=document.createElement('p');resolution.textContent=explanation.resolution;box.append(resolution);
+ for(const source of explanation.sources){
+  const item=document.createElement('div');item.className='explanation-item';
+  const title=document.createElement('strong');title.textContent=source.title+(source.decisive?' · 本次限制来源':'');item.append(title);
+  const detail=document.createElement('p');detail.textContent=source.detail;item.append(detail);
+  if(source.location){const location=document.createElement('p');location.className='meta';location.textContent='查看位置：'+source.location;item.append(location)}
+  if(source.target){
+   const button=document.createElement('button');button.textContent=source.target==='node'?'查看节点 '+source.node_id:source.target==='permissions'?'查看相关权限':'查看全局审核说明';
+   button.onclick=async()=>{try{
+    if($('detail').open)$('detail').close();
+    if(source.target==='permissions'){
+     if(!permissions)await loadPermissions();
+     $('tree').classList.add('hidden');$('permissions-panel').classList.remove('hidden');
+     const field=(source.permission_keys||[]).map(key=>key==='allow_private_network'?$('permission-private'):$('permission-'+key)).find(Boolean);
+     if(field){field.focus();field.scrollIntoView({block:'center'})}
+     else $('permissions-panel').scrollIntoView({block:'start'});
+    }else{
+     $('tree').classList.remove('hidden');$('permissions-panel').classList.add('hidden');
+     const tab=source.target==='node'?'node':'settings';
+     if(tab==='node'){
+      if(!config.tree.nodes[source.node_id])throw Error('该历史节点已不在当前配置中，请查看原始记录。');
+      select(source.node_id);
+     }
+     for(const name of ['node','settings','run'])$(name+'-tab').classList.toggle('hidden',name!==tab);
+    }
+   }catch(e){status(e.message,true)}};
+   item.append(button);
+  }
+  box.append(item);
+ }
+ const approval=document.createElement('p');approval.textContent='人工批准：'+explanation.approval;box.append(approval);
+}
+function showAction(row){
+ renderExplanation('detail-explanation',row.explanation);
+ $('detail-json').textContent=JSON.stringify(row,null,2);
+ const related=$('detail-related');related.replaceChildren();
+ const parentId=item=>item.state?.action_audit_id||item.state?.request_audit_id||item.related_audit_id;
+ if(row.audit_link_note){const note=document.createElement('p');note.className='meta';note.textContent=row.audit_link_note;related.append(note)}
+ const reference=parentId(row),original=reference&&rows.find(item=>item.audit_id===reference);
+ if(original){const button=document.createElement('button');button.textContent=row.related_audit_id?'查看关联审核':'查看原审核';button.onclick=()=>showAction(original);related.append(button)}
+ else if(reference){const note=document.createElement('p');note.className='meta';note.textContent='关联审核 '+reference+' 不在当前最近记录中。';related.append(note)}
+ for(const child of rows.filter(item=>parentId(item)===row.audit_id)){
+  const button=document.createElement('button');button.textContent='查看'+(child.explanation?.stage_label||child.stage)+'：'+(child.explanation?.summary||child.effective_decision);
+  button.onclick=()=>showAction(child);related.append(button);
+ }
+ if(!$('detail').open)$('detail').showModal();
+}
+
+function status(s,bad=false){$('status').textContent=s;$('status').style.color=bad?'#a24340':''}
+async function api(path,data){const r=await fetch(path,{method:data?'POST':'GET',headers:data?{'Content-Type':'application/json','X-Router-Token':token}:{},body:data?JSON.stringify(data):undefined});const d=await r.json();if(!r.ok)throw Error(d.error||d.status);return d}
+function syncChildren(){for(const n of Object.values(config.tree.nodes))n.children=n.children.map(c=>{const v=config.tree.nodes[c.id];return{id:v.id,label:v.label,description:v.description}})}
+function parentOf(id){return Object.values(config.tree.nodes).find(n=>n.children.some(c=>c.id===id))?.id||''}
+function descend(id){return [id,...config.tree.nodes[id].children.flatMap(c=>descend(c.id))]}
+function render(){const box=$('tree');box.replaceChildren();const ul=document.createElement('ul');box.append(ul);function node(id,parent){const n=config.tree.nodes[id],li=document.createElement('li'),b=document.createElement('button');b.className='node'+(selected===id?' selected':'');b.textContent=id+(n.execution_rule?' · '+({review:'执行审核',ask:'需确认',block:'禁止'}[n.execution_rule.decision]):'');b.dataset.node=id;b.onclick=()=>select(id);li.append(b);parent.append(li);if(n.children.length){const sub=document.createElement('ul');li.append(sub);n.children.forEach(c=>node(c.id,sub))}else for(const [kind,t]of Object.entries(n.taxonomy||{})){const d=document.createElement('details'),s=document.createElement('summary');s.textContent=kind+' · '+t.labels.length;d.append(s);const tags=document.createElement('div');tags.className='tags';t.labels.forEach(v=>{const x=document.createElement('span');x.className='tag';x.textContent=v;tags.append(x)});d.append(tags);li.append(d)}}node('root',ul);$('revision').textContent='revision '+revision+(dirty?' · unsaved':'');}
+function select(id){selected=id;const n=config.tree.nodes[id];$('selected').textContent=id;$('label').value=n.label;$('description').value=n.description;$('policy').value=n.review_policy;selectExecutionRule(n);$('mode').value=n.category_mode||'single';const t=n.taxonomy?.score||n.taxonomy?.category;$('categories').value=(t?.labels||[]).join('\n');$('definitions').value=JSON.stringify(t?.definitions||{},null,2);$('requires').checked=!!n.requires_governing_policy;const p=$('parent');p.replaceChildren();const excluded=new Set(descend(id));for(const v of Object.keys(config.tree.nodes).filter(x=>!excluded.has(x))){const o=document.createElement('option');o.value=v;o.textContent=v;p.append(o)}p.value=parentOf(id);p.disabled=id==='root';$('remove').disabled=id==='root';render()}
+function thresholdFields(){
+ const enabled=$('unsafe-threshold-enabled').checked,field=$('unsafe-threshold');
+ field.disabled=!enabled;field.required=enabled;
+ $('unsafe-threshold-status').textContent=enabled?'当前草稿：使用自定义阈值审核用户请求。':'当前草稿：使用模型原始安全标签和决策置信度审核用户请求。';
+}
+$('unsafe-threshold-enabled').onchange=thresholdFields;
+function loadSettings(){
+ $('default-policy').value=config.default_policy;
+ $('decision-probability').value=config.thresholds.decision_probability;
+ const threshold=config.thresholds.unsafe_threshold;
+ $('unsafe-threshold-enabled').checked=threshold!==null&&threshold!==undefined;
+ $('unsafe-threshold').value=threshold??'';
+ thresholdFields();
+}
+async function load(){const d=await api('/api/config');config=d.config;executionEffects=d.execution_rule_effects||[];token=d.csrf;revision=config.revision;dirty=false;if(!config.tree.nodes[selected])selected='root';loadSettings();const list=$('policy-names');list.replaceChildren();for(const name of new Set(Object.values(config.tree.nodes).flatMap(n=>n.audit?.governing_policy_names||[]))){const o=document.createElement('option');o.value=name;list.append(o)}select(selected);status('Configuration loaded');}
+function apply(){const backup=structuredClone(config);try{const n=config.tree.nodes[selected];n.label=$('label').value.trim();n.description=$('description').value.trim();n.review_policy=$('policy').value.trim();applyExecutionRule(n);n.requires_governing_policy=$('requires').checked;const mode=$('mode').value;const labels=$('categories').value.split('\n').map(x=>x.trim()).filter(Boolean);if(new Set(labels).size!==labels.length)throw Error('Duplicate categories');if(!n.children.length&&!labels.length&&!n.native_safety_only)throw Error('Leaves need a taxonomy');n.category_mode=mode;n.taxonomy=labels.length?{[mode==='score'?'score':'category']:{labels,definitions:JSON.parse($('definitions').value||'{}')}}:{};const old=parentOf(selected),next=$('parent').value;if(selected!=='root'&&old!==next){if(descend(selected).includes(next))throw Error('Cycles are not allowed');if(!config.tree.nodes[next].children.length)throw Error('Add a child before using a leaf as a parent');config.tree.nodes[old].children=config.tree.nodes[old].children.filter(c=>c.id!==selected);config.tree.nodes[next].children.push({id:selected});}syncChildren();dirty=true;render();status('Draft updated; save to apply')}catch(e){config=backup;throw e}}
+function bind(id,fn){$(id).onclick=async()=>{try{await fn()}catch(e){status(e.message,true)}}}
+bind('apply',apply);bind('reload',load);bind('save',async()=>{if(!$('node-tab').classList.contains('hidden'))apply();else if(!$('settings-tab').classList.contains('hidden'))applySettings();const d=await api('/api/config',{config,expected_revision:revision});config=d.config;revision=config.revision;dirty=false;render();status('Saved: subsequent actions use revision '+revision)});
+function applySettings(){
+ const confidence=$('decision-probability'),threshold=$('unsafe-threshold');
+ const enabled=$('unsafe-threshold-enabled').checked;
+ if(!confidence.checkValidity()||!confidence.value.trim())throw Error('决策置信度须为0到1之间的数值');
+ if(enabled&&(!threshold.checkValidity()||!threshold.value.trim()))throw Error('启用请求阈值时，请填写0到1之间的数值');
+ const decision=Number(confidence.value),unsafe=enabled?Number(threshold.value):null;
+ if(!Number.isFinite(decision)||decision<0||decision>1||unsafe!==null&&(!Number.isFinite(unsafe)||unsafe<0||unsafe>1))throw Error('阈值须为0到1之间的有限数值');
+ config.thresholds={...config.thresholds,route_probability:0,route_margin:0,decision_probability:decision,unsafe_threshold:unsafe};
+ config.default_policy=$('default-policy').value;dirty=true;render();status('Policy applied to draft');
+}
+bind('apply-settings',applySettings);bind('add',()=>{const id=prompt('New node ID (e.g. cyber.tools)');if(!id)return;if(!/^[A-Za-z0-9_.-]{1,160}$/.test(id)||config.tree.nodes[id])throw Error('Invalid or existing ID');const parent=config.tree.nodes[selected];if(!parent.children.length){const child=selected+'.existing';if(config.tree.nodes[child])throw Error('Existing child already exists');config.tree.nodes[child]={...structuredClone(parent),id:child,label:child,children:[]};delete config.tree.nodes[child].execution_rule;parent.children.push({id:child});parent.taxonomy={};}config.tree.nodes[id]={id,label:id,description:'Describe this audit capability.',children:[],review_policy:'Classify the supplied material using the category definitions of this node.',category_mode:'single',taxonomy:{category:{labels:['Other'],definitions:{}}},requires_governing_policy:false};parent.children.push({id});syncChildren();dirty=true;select(id);status('Node added to draft')});
+bind('remove',()=>{if(selected==='root')return;if(!confirm('Delete '+selected+' and its subtree?'))return;const parent=parentOf(selected),ids=descend(selected);if(config.tree.nodes[parent].children.length===1)throw Error('Cannot leave an empty branch without taxonomy');config.tree.nodes[parent].children=config.tree.nodes[parent].children.filter(c=>c.id!==selected);ids.forEach(id=>delete config.tree.nodes[id]);dirty=true;select(parent)});
+bind('export',()=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(config,null,2)],{type:'application/json'}));a.download='hermes-router-config.json';a.click();URL.revokeObjectURL(a.href)});bind('import',()=>$('file').click());$('file').onchange=async()=>{try{const d=JSON.parse(await $('file').files[0].text());if(!d.tree?.nodes?.root||!d.thresholds)throw Error('Invalid configuration');config=d;dirty=true;loadSettings();select('root');status('Draft imported; full validation occurs on save')}catch(e){status(e.message,true)}};
+document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{for(const id of ['node','settings','run'])$(id+'-tab').classList.toggle('hidden',id!==b.dataset.tab)});
+async function actions(){rows=await api('/api/actions');$('actions').replaceChildren();const counts={allow:0,ask:0,block:0};for(const a of [...rows].reverse()){counts[a.effective_decision]=(counts[a.effective_decision]||0)+1;const tr=document.createElement('tr');const r=a.review;const fields=[a.task_id+' / '+a.action_id.slice(0,8),a.state.proposed_tool_name||a.state.tool_name||'—',a.explanation?.stage_label||a.stage,(r.routing?.leaves||[]).map(l=>l.id).join(', ')||r.routing?.status||'—',(r.audits||[]).flatMap(x=>(x.result.categories||[]).map(c=>c+(x.result.category_status==='uncertain'?' (?)':''))).slice(0,5).join(', '),(a.explanation?.summary||a.effective_decision)+' · '+(typeof r.review_seconds==='number'?(r.review_seconds*1000).toFixed(0)+'ms':'—')+' · policy '+(r.config_revision??'—')+' · permissions '+(r.permissions_revision??'—')];for(const v of fields){const td=document.createElement('td');td.textContent=v;tr.append(td)}tr.lastChild.className=a.effective_decision;tr.onclick=()=>showAction(a);$('actions').append(tr)}$('counts').replaceChildren();for(const[k,v]of Object.entries(counts)){const s=document.createElement('span');s.textContent=k+' 记录 '+v;s.className=k;$('counts').append(s)}}
+bind('refresh',actions);bind('close',()=>$('detail').close());let poll;
+bind('run',async()=>{const d=await api('/api/preview',{message:$('prompt').value,tool:$('tool-name').value,args:JSON.parse($('files').value||'{}'),governing_policy:$('governing-policy').value.trim(),policy_text:$('policy-text').value});renderExplanation('run-explanation',d.explanation);$('run-result').textContent=JSON.stringify(d,null,2);status('Review completed; no tool executed')});
+(async()=>{try{await load();await actions();const h=await api('/api/health');$('health').textContent=h.model+' · '+h.context_limit+' token context'}catch(e){status(e.message,true)}})();
+
+const permissionLists={
+ allowed_read_roots:'可读取目录',allowed_write_roots:'可写入目录',allowed_execute_roots:'可执行目录',
+ allowed_read_paths:'可读取文件',allowed_write_paths:'可写入文件',allowed_execute_paths:'可执行文件',
+ read_only_roots:'只读目录',write_only_roots:'只写目录',read_only_paths:'只读文件',write_only_paths:'只写文件',
+ credential_paths:'凭据路径',protected_paths:'受保护源数据路径',
+ allowed_network_hosts:'可读取的网页域名（空列表不限制公开域名）',
+ blocked_search_terms:'禁止出现在公开搜索词中的文本'
+};
+const permissionChoices={
+ network_search:['公开搜索','approval_required','allowed','denied'],
+ network_read:['网页读取','approval_required','allowed','denied'],
+ credential_access:['凭据访问','denied','allowed'],
+ source_data_modification:['修改受保护源数据','denied','allowed'],
+ source_data_deletion:['删除受保护源数据','denied','allowed']
+};
+const choiceLabels={allowed:'允许',denied:'禁止',approval_required:'每次确认'};
+function markPermissionsDirty(){permissionsDirty=true;$('permissions-revision').textContent='权限修订 '+permissions.revision+' · 尚未保存'}
+function renderPermissions(){
+ const box=$('permission-fields');box.replaceChildren();
+ for(const [key,[label,...choices]] of Object.entries(permissionChoices)){
+  const title=document.createElement('label');title.htmlFor='permission-'+key;title.textContent=label;
+  const select=document.createElement('select');select.id=title.htmlFor;
+  for(const value of choices){const option=document.createElement('option');option.value=value;option.textContent=choiceLabels[value];select.append(option)}
+  select.value=permissions.scope[key];select.onchange=markPermissionsDirty;box.append(title,select);
+ }
+ for(const [key,label] of Object.entries(permissionLists)){
+  const title=document.createElement('label');title.htmlFor='permission-'+key;title.textContent=label;
+  const field=document.createElement('textarea');field.id=title.htmlFor;field.rows=2;
+  field.value=(permissions.scope[key]||[]).join('\n');
+  field.placeholder=key==='blocked_search_terms'?'每行一项；按 Unicode 规范化后忽略大小写匹配':key==='allowed_network_hosts'?'每行一个域名或IP，不含协议、端口、路径或通配符':'每行一个绝对路径';
+  field.oninput=markPermissionsDirty;box.append(title,field);
+ }
+ const label=document.createElement('label'),check=document.createElement('input');
+ check.type='checkbox';check.id='permission-private';check.className='check';check.checked=permissions.scope.allow_private_network;
+ check.onchange=markPermissionsDirty;label.append(check,document.createTextNode(' 允许访问域名列表中的本机或私有网络地址'));box.append(label);
+ $('permissions-revision').textContent='权限修订 '+permissions.revision;
+}
+async function loadPermissions(){
+ if(permissionsDirty&&!confirm('放弃尚未保存的权限修改并重新载入？'))return;
+ const data=await api('/api/permissions');permissions=data.permissions;token=data.csrf;
+ permissionsDirty=false;renderPermissions();
+}
+bind('show-tree',()=>{$('tree').classList.remove('hidden');$('permissions-panel').classList.add('hidden')});
+bind('show-permissions',async()=>{
+ if(!permissions)await loadPermissions();
+ $('tree').classList.add('hidden');$('permissions-panel').classList.remove('hidden');
+});
+bind('reload-permissions',loadPermissions);
+bind('save-permissions',async()=>{
+ const draft=structuredClone(permissions);
+ for(const key of Object.keys(permissionChoices))draft.scope[key]=$('permission-'+key).value;
+ for(const key of Object.keys(permissionLists))draft.scope[key]=[...new Set($('permission-'+key).value.split('\n').map(x=>x.trim()).filter(Boolean))];
+ draft.scope.allow_private_network=$('permission-private').checked;
+ const data=await api('/api/permissions',{permissions:draft,expected_revision:permissions.revision});
+ permissions=data.permissions;permissionsDirty=false;renderPermissions();
+ status('权限已保存并应用；会话追加授权和旧审批已失效。权限修订 '+permissions.revision);
+});
+window.addEventListener('beforeunload',event=>{if(dirty||permissionsDirty){event.preventDefault();event.returnValue=''}});
+
+</script></html>

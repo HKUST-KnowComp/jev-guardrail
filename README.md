@@ -137,6 +137,10 @@ bash /tmp/install-hermes-jev.sh --endpoint https://theft-anticipated-won-threats
 jev-hermes
 ```
 
-Configure your provider with `hermes setup`. `/safety-policy` opens the live tree editor. The model card contains inference and installation details. This repository contains the website only.
+Configure your provider with `hermes setup`. `/safety-policy` opens the live tree editor. The model card contains inference and installation details.
+
+## Hermes 插件源码
+
+本仓库同时维护项目网站和 [Hermes 插件源码](integrations/hermes/jev-guard/)。[插件维护与部署说明](integrations/hermes/README.md)介绍了目录结构、在现有 Linux/WSL Hermes 中更新插件的方法，以及默认关闭的请求阈值开关。
 
 Video: actual action-review replay and archived Hermes + DeepSeek output; AI narration (Kokoro `af_heart`), Cipher by Kevin MacLeod ([source](https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1100844)), [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). Independent research built on Qwen, Open-Jev and Hermes.
